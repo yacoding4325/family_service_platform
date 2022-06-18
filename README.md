@@ -58,46 +58,9 @@ VUE_APP_API_BASE_URL=http://localhost:8080/
 
 ​		2、删除main.js的mock数据挂载，在src目录下打开main.js文件，将import './mock'代码注释
 
-​		3、当修改成功之后，重新运行服务，点击登录请求，查看发送的地址是什么地址，如果出现http://localhost:8080/auth/login，则表示前端项目的修改已经成功，只需要去修改后端项目的配置即可。不要问我不成功怎么办，你按照我的方式，不可能不成功！
-
 ### 5、修改后端项目的配置，完成通信功能
 
 ​		1、在项目中新建一个config的包，添加跨域的配置类
-
-```java
-package com.mashibing.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
-@Configuration
-public class CorsConfig {
-    private CorsConfiguration buildConfig() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        //  你需要跨域的地址  注意这里的 127.0.0.1 != localhost
-        // * 表示对所有的地址都可以访问
-        corsConfiguration.addAllowedOrigin("*");
-        //  跨域的请求头
-        corsConfiguration.addAllowedHeader("*"); // 2
-        //  跨域的请求方法
-        corsConfiguration.addAllowedMethod("*"); // 3
-        //加上了这一句，大致意思是可以携带 cookie
-        //最终的结果是可以 在跨域请求的时候获取同一个 session
-        corsConfiguration.setAllowCredentials(true);
-        return corsConfiguration;
-    }
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        //配置 可以访问的地址
-        source.registerCorsConfiguration("/**", buildConfig()); // 4
-        return new CorsFilter(source);
-    }
-}
-```
 
 ​		或者可以在controller类的上面添加注解
 
@@ -107,36 +70,5 @@ public class CorsConfig {
 
 ​		2、添加对应的controller进行处理
 
-LoginController.java
-
-```java
-package com.bjmsb.controller;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@CrossOrigin(origins = "*",allowCredentials="true",allowedHeaders = "*",methods = {})
-public class LoginController {
-
-    @RequestMapping("/auth/2step-code")
-    public boolean step_code2(){
-        System.out.println("此请求是前端框架带的默认请求，可以不做任何处理，也可以在前端将其删除");
-        System.out.println("step_code2");
-        return true;
-    }
-
-    @RequestMapping("/auth/login")
-    public String login(){
-        System.out.println("login");
-        return "success";
-    }
-}
-```
-
-如果能请求成功，那么就意味着整个项目已经可以顺利进行通信，后续的话只需要完成对应业务的编写即可，
 
 ***
-
-​		从下面开始，我们就要开始进行整个项目的业务开发了，所以希望大家能提起精神，干他！！！
